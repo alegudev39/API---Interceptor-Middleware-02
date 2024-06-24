@@ -30,20 +30,24 @@ public class MonthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        int monthNumber;
         try {
-            monthNumber = Integer.parseInt(monthNumberStr);
+            int monthNumber = Integer.parseInt(monthNumberStr);
+            Month month = null;
+            for (Month m : monthList) {
+                if (m.getMonthNumber() == monthNumber) {
+                    month = m;
+                    break;
+                }
+            }
+            if (month == null) {
+                month = new Month(0, "nope", "nope", "nope");
+            }
+            request.setAttribute("month", month);
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "monthNumber must be an integer");
             return false;
         }
 
-        Month month = monthList.stream()
-                .filter(m -> m.getMonthNumber() == monthNumber)
-                .findFirst()
-                .orElse(new Month(0, "nope", "nope", "nope"));
-
-        request.setAttribute("month", month);
         return true;
     }
 }
